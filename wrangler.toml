@@ -1,0 +1,11 @@
+name = "cs-dashboard"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = ".vercel/output/static"
+
+# Environment variables for production
+[env.production]
+vars = { NODE_ENV = "production" }
+
+# You can add more environments if needed
+[env.preview]
+vars = { NODE_ENV = "preview" }
