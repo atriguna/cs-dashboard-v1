@@ -20,6 +20,7 @@ export interface CSEvaluation {
   relevance: number | null;
   overall_score: number | null;
   feedback: string | null;
+  tags: string | null;
   created_at: string;
 }
 

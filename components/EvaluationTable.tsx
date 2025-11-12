@@ -16,6 +16,7 @@ export default function EvaluationTable({ evaluations }: EvaluationTableProps) {
   const [searchTicket, setSearchTicket] = useState('');
   const [searchAgent, setSearchAgent] = useState('');
   const [searchChannel, setSearchChannel] = useState('');
+  const [searchTags, setSearchTags] = useState('');
 
   // Filter evaluations based on search
   const filteredEvaluations = useMemo(() => {
@@ -26,9 +27,11 @@ export default function EvaluationTable({ evaluations }: EvaluationTableProps) {
         (evaluation.agent_name?.toLowerCase() || '').includes(searchAgent.toLowerCase());
       const matchesChannel = searchChannel === '' || 
         (evaluation.channel_account?.toLowerCase() || '').includes(searchChannel.toLowerCase());
-      return matchesTicket && matchesAgent && matchesChannel;
+      const matchesTags = searchTags === '' || 
+        (evaluation.tags?.toLowerCase() || '').includes(searchTags.toLowerCase());
+      return matchesTicket && matchesAgent && matchesChannel && matchesTags;
     });
-  }, [evaluations, searchTicket, searchAgent, searchChannel]);
+  }, [evaluations, searchTicket, searchAgent, searchChannel, searchTags]);
 
   // Group evaluations by ticket_id
   const groupedEvaluations = useMemo(() => {
@@ -108,10 +111,11 @@ export default function EvaluationTable({ evaluations }: EvaluationTableProps) {
     setSearchTicket('');
     setSearchAgent('');
     setSearchChannel('');
+    setSearchTags('');
     setCurrentPage(1);
   };
 
-  const hasActiveFilters = searchTicket !== '' || searchAgent !== '' || searchChannel !== '';
+  const hasActiveFilters = searchTicket !== '' || searchAgent !== '' || searchChannel !== '' || searchTags !== '';
 
   const getScoreColor = (score: number | null) => {
     if (!score) return 'text-gray-400';
@@ -225,6 +229,22 @@ export default function EvaluationTable({ evaluations }: EvaluationTableProps) {
                   </option>
                 ))}
               </select>
+            </div>
+            
+            <div className="flex-1 min-w-[200px]">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search by tags..."
+                  value={searchTags}
+                  onChange={(e) => {
+                    setSearchTags(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
             </div>
             
             {hasActiveFilters && (
@@ -426,6 +446,20 @@ export default function EvaluationTable({ evaluations }: EvaluationTableProps) {
                       <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         {format(new Date(evaluation.created_at), 'MMM dd, yyyy HH:mm')}
                       </p>
+                      {evaluation.tags && (
+                        <div className="mt-2">
+                          <div className="flex flex-wrap gap-2">
+                            {evaluation.tags.split(',').map((tag, tagIndex) => (
+                              <span
+                                key={tagIndex}
+                                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300"
+                              >
+                                {tag.trim()}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <div className="text-right space-y-2">
                       <div>
