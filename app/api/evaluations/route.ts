@@ -7,15 +7,15 @@ export const runtime = 'edge';
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '100');
     const agent = searchParams.get('agent');
 
-    // First, get evaluations
+    // First, get evaluations - fetch ALL records
+    // Using range instead of limit to bypass Supabase's 1000 row limit
     let query = supabase
       .from('cs_evaluation')
-      .select('*')
+      .select('*', { count: 'exact' })
       .order('created_at', { ascending: false })
-      .limit(limit);
+      .range(0, 9999); // Fetch up to 10000 records
 
     if (agent && agent !== 'all') {
       query = query.eq('agent_name', agent);

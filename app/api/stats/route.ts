@@ -10,11 +10,13 @@ export async function GET() {
     
     // Get recent evaluations from Supabase (same as table display)
     // Using same limit as evaluations table for consistency
+    // Fetch ALL evaluations for accurate statistics
+    // Using range instead of limit to bypass Supabase's 1000 row limit
     const { data: evaluations, error } = await supabase
       .from('cs_evaluation')
-      .select('*')
+      .select('*', { count: 'exact' })
       .order('created_at', { ascending: false })
-      .limit(300);
+      .range(0, 9999); // Fetch up to 10000 records
 
 
 

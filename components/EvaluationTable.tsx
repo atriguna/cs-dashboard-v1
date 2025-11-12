@@ -20,7 +20,7 @@ export default function EvaluationTable({ evaluations }: EvaluationTableProps) {
 
   // Filter evaluations based on search
   const filteredEvaluations = useMemo(() => {
-    return evaluations.filter((evaluation) => {
+    const filtered = evaluations.filter((evaluation) => {
       const matchesTicket = searchTicket === '' || 
         (evaluation.ticket_id?.toLowerCase() || '').includes(searchTicket.toLowerCase());
       const matchesAgent = searchAgent === '' || 
@@ -31,6 +31,8 @@ export default function EvaluationTable({ evaluations }: EvaluationTableProps) {
         (evaluation.tags?.toLowerCase() || '').includes(searchTags.toLowerCase());
       return matchesTicket && matchesAgent && matchesChannel && matchesTags;
     });
+    
+    return filtered;
   }, [evaluations, searchTicket, searchAgent, searchChannel, searchTags]);
 
   // Group evaluations by ticket_id
@@ -46,7 +48,7 @@ export default function EvaluationTable({ evaluations }: EvaluationTableProps) {
     });
     
     // Convert to array and sort by most recent evaluation
-    return Array.from(grouped.entries())
+    const result = Array.from(grouped.entries())
       .map(([ticketId, evals]) => ({
         ticketId,
         evaluations: evals.sort((a, b) => 
@@ -61,6 +63,8 @@ export default function EvaluationTable({ evaluations }: EvaluationTableProps) {
       .sort((a, b) => 
         new Date(b.latestEval.created_at).getTime() - new Date(a.latestEval.created_at).getTime()
       );
+    
+    return result;
   }, [filteredEvaluations]);
 
   // Get evaluations for selected ticket

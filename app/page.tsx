@@ -70,8 +70,8 @@ export default function Home() {
         const statsData = await statsRes.json();
         setStats(statsData);
 
-        // Fetch evaluations (increased limit to show all agents)
-        const evalsRes = await fetch(`/api/evaluations?limit=300&_t=${timestamp}`, {
+        // Fetch ALL evaluations (no limit, pagination handled in frontend)
+        const evalsRes = await fetch(`/api/evaluations?_t=${timestamp}`, {
           cache: 'no-store'
         });
         if (!evalsRes.ok) throw new Error('Failed to fetch evaluations');
