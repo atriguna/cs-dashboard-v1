@@ -16,7 +16,7 @@ export async function GET() {
       .from('cs_evaluation')
       .select('*', { count: 'exact' })
       .order('created_at', { ascending: false })
-      .range(0, 9999); // Fetch up to 10000 records
+      .range(0, 29999); // Fetch up to 10000 records
 
 
 
